@@ -2,14 +2,6 @@
 
 Very scary module that does scary but cool things. Run at your own risk, and always disable before reporting bugs.
 
-## How to Install
-
-### Manual Install
-In Foundry setup, click on the Install Module button and put the following path in the Manifest URL. You could also use a path from a specific release.
-
-`https://github.com/CarlosFdez/pf2e-persistent-damage/releases/latest/download/module.json`
-
-
 ## How to Build
 It is recommended to use VSCode for the project, but anything else that can handle typescript will work. Node 14 or higher is required.
 
@@ -27,7 +19,8 @@ Add the following to the main pathfinder tsconfig.json and run `npx tsc`
         "declaration": true,
         "declarationDir": "dist/types",
         "emitDeclarationOnly": true
-}```
+}
+```
 
 Copy dist/types to types/
 Copy types to types/types (so that its types/types/foundry...)
