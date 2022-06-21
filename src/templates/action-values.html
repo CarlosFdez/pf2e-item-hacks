@@ -1,0 +1,12 @@
+<div class="action-tracking">
+    <input type="number" value="{{uses.value}}" name="flags.pf2e-action-tracking.uses.{{slug}}.value" data-dtype="Number"/>
+    /
+    <input type="number" value="{{uses.max}}" name="flags.pf2e-action-tracking.uses.{{slug}}.max" data-dtype="Number"/>
+    <select name="flags.pf2e-action-tracking.uses.{{slug}}.per" data-dtype="String">
+        {{#select uses.per}}
+            {{#each frequencies as |value key|}}
+                <option value="{{key}}">{{localize value}}</option>
+            {{/each}}
+        {{/select}}
+    </select>
+</div>

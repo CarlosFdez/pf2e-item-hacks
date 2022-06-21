@@ -1,0 +1,40 @@
+.actor.character {
+    .actions .item[data-item-id] {
+        .item-name {
+            flex: 1;
+        }
+
+        .item-controls {
+            min-width: 28px;
+            text-align: right;
+        }
+    }
+
+    .action-tracking.unlimited i {
+        font-size: 0.85em;
+    }
+
+    .action-tracking {
+        margin-left: auto;
+        margin-right: 16px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        input {
+            width: 0;
+            flex: 0 1 48px;
+            background: none;
+            text-align: center;
+        }
+
+        select {
+            margin-left: 4px;
+            box-sizing: border-box;
+            width: auto;
+            padding-top: 2px;
+            padding-bottom: 1px;
+        }
+    }
+}

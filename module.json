@@ -1,0 +1,52 @@
+{
+    "name": "pf2e-item-hacks",
+    "title": "PF2E Item Hacks",
+    "description": "Admittedly hacky QOL features",
+    "author": "Supe",
+    "version": "0.1.0",
+    "compatibleCoreVersion": "9",
+    "minimumCoreVersion": "9",
+    "minimumSystemVersion": "3.0.0",
+    "type": "module",
+    "systems": ["pf2e"],
+    "esmodules": ["./index.js"],
+    "styles": ["./styles/styles.css"],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
+    "packs": [
+        {
+            "name": "pf2e-item-hacks-macros",
+            "label": "PF2E Persistent Damage Macros",
+            "system": "pf2e",
+            "path": "packs/pf2e-at-macros.db",
+            "entity": "Macro",
+            "module": "pf2e-action-tracking"
+        }
+    ],
+    "flags": {
+        "pf2e-item-hacks": {
+            "pf2e-homebrew": {
+                "weaponTraits": {
+                    "battlezoo": {
+                        "label": "Battlezoo",
+                        "description": "Battlezoo Crafted Item"
+                    }
+                },
+                "equipmentTraits": {
+                    "battlezoo": {
+                        "label": "Battlezoo",
+                        "description": "Battlezoo Crafted Item"
+                    }
+                }
+            }
+        }
+    },
+    "url": "https://github.com/CarlosFdez/pf2e-item-hacks",
+    "manifest": "https://github.com/CarlosFdez/pf2e-item-hacks/releases/latest/download/module.json",
+    "download": "https://github.com/CarlosFdez/pf2e-item-hacks/releases/download/v0.1.0/module.zip"
+}
