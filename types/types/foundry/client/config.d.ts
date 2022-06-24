@@ -47,7 +47,11 @@ declare global {
                 new (data: PreCreate<TActor["data"]["_source"]>, context?: DocumentConstructionContext<TActor>): TActor;
             };
             collection: ConstructorOf<Actors<TActor>>;
-            sheetClasses: Record<string, Record<string, { cls: typeof ActorSheet }>>;
+            sheetClasses: Record<string, Record<string, {
+                id: string;
+                cls: typeof ActorSheet;
+                default: boolean;
+            }>>;
             typeLabels: Record<string, string | undefined>;
         };
 
@@ -95,7 +99,11 @@ declare global {
                 new (data: PreCreate<TItem["data"]["_source"]>, context?: DocumentConstructionContext<TItem>): TItem;
             };
             collection: typeof Items;
-            sheetClasses: Record<string, Record<string, typeof ItemSheet>>;
+            sheetClasses: Record<string, Record<string, {
+                id: string;
+                cls: typeof ItemSheet;
+                default: boolean;
+            }>>;
             typeLabels: Record<string, string | undefined>;
         };
 
@@ -393,7 +401,7 @@ declare global {
             types: Array<typeof Die | typeof DiceTerm>;
             rollModes: Record<RollMode, string>;
             rolls: ConstructorOf<Roll>[];
-            termTypes: Record<string, typeof DiceTerm>;
+            termTypes: Record<string, ConstructorOf<RollTerm>>;
             terms: {
                 c: typeof Coin;
                 d: typeof Die;

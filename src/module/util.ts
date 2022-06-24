@@ -1,15 +1,9 @@
-import { ActorPF2e } from "@pf2e/module/actor";
-import type { CharacterSheetPF2e } from "@pf2e/module/actor/character/sheet";
-import { ActorSheetPF2e } from "@pf2e/module/actor/sheet/base";
-import type { ActionItemPF2e, FeatPF2e, ItemPF2e, PhysicalItemPF2e } from "@pf2e/module/item";
-import { ItemDataPF2e, ItemSourcePF2e, PhysicalItemData, PhysicalItemSource } from "@pf2e/module/item/data";
-
 type Abstract<T> = Function & {prototype: T};
 type Constructor<T> = new (...args: any[]) => T;
 export type Class<T> = Abstract<T> | Constructor<T>;
 type UnknownFunction = (...args: unknown[]) => unknown;
 
-export function isCharacterSheet(sheet: ActorSheetPF2e<ActorPF2e>): sheet is CharacterSheetPF2e {
+export function isCharacterSheet(sheet: ActorSheet): sheet is CharacterSheetPF2e {
     if (sheet instanceof CONFIG.Actor.sheetClasses.character["pf2e.CharacterSheetPF2e"]?.cls) {
         return true;
     }
@@ -47,23 +41,6 @@ export const PHYSICAL_ITEM_TYPES = new Set([
     "treasure",
     "weapon",
 ] as const);
-
-/** Checks if the given item data is a physical item with a quantity and other physical fields. */
-export function isPhysicalData(itemData: ItemSourcePF2e): itemData is PhysicalItemSource;
-export function isPhysicalData(itemData: ItemDataPF2e): itemData is PhysicalItemData;
-export function isPhysicalData(
-    itemData: ItemSourcePF2e | ItemDataPF2e
-): itemData is PhysicalItemSource | PhysicalItemData;
-export function isPhysicalData(
-    itemData: ItemSourcePF2e | ItemDataPF2e
-): itemData is PhysicalItemSource | PhysicalItemData {
-    const physicalItemTypes: Set<string> = PHYSICAL_ITEM_TYPES;
-    return physicalItemTypes.has(itemData.type);
-}
-
-export function isPhysicalItem(item: unknown): item is PhysicalItemPF2e {
-    return item instanceof Item && isPhysicalData((item as ItemPF2e).data);
-}
 
 export function insertIntoObject<T extends Record<string | number | symbol, unknown>>(
     object: T,

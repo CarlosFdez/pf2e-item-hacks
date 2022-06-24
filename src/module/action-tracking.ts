@@ -1,8 +1,4 @@
-import { ActorPF2e, CharacterPF2e } from "@pf2e/module/actor";
-import type { ActionItemPF2e, FeatPF2e } from "@pf2e/module/item";
 import { isActionItem, isCharacterSheet, isFeatItem } from "./util";
-import { ActorSheetPF2e } from "@pf2e/module/actor/sheet/base";
-import { ActionDefaultOptions } from "@pf2e/module/system/action-macros";
 
 const Frequencies = {
     PT10M: "PF2E.Duration.PT10M",
@@ -59,7 +55,7 @@ function setupActionTracking() {
         }
     };
 
-    Hooks.on("renderActorSheet", async (sheet: ActorSheetPF2e<ActorPF2e>, $html: JQuery) => {
+    Hooks.on("renderActorSheet", async (sheet: ActorSheet, $html: JQuery) => {
         if (!isCharacterSheet(sheet)) return;
 
         const possibleActions = $html.find(".actions .item");
@@ -102,8 +98,8 @@ async function rechargeActionUses(actor: ActorPF2e) {
 }
 
 /** Pulls usage flags from the actor. If create is set, it will add to actor flags */
-function getFlags(actor: Actor) {
-    return actor.data.flags["pf2e-action-tracking"] as ActorTrackingFlags ?? DefaultActionTracking;
+function getFlags(actor: ActorPF2e): ActorTrackingFlags {
+    return mergeObject(deepClone(DefaultActionTracking), actor.data.flags["pf2e-action-tracking"] ?? {});
 }
 
 export { setupActionTracking };

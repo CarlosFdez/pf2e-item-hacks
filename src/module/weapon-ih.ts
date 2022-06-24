@@ -1,6 +1,3 @@
-import { OneToFour } from "@pf2e/module/data";
-import { WeaponPF2e } from "@pf2e/module/item";
-import { Coins } from "@pf2e/module/item/physical/data";
 import { WeaponArmorRefinementCosts, WeaponPotencyLevels, WeaponStrikingLevels } from "./battlezoo";
 import { lookup } from "./util";
 

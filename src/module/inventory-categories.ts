@@ -1,7 +1,3 @@
-import { CharacterSheetPF2e } from "@pf2e/module/actor/character/sheet";
-import { LootSheetPF2e } from "@pf2e/module/actor/loot/sheet";
-import { ConsumablePF2e, PhysicalItemPF2e } from "@pf2e/module/item";
-import { ConsumableData, EquipmentData, ItemDataPF2e } from "@pf2e/module/item/data";
 import { Class, insertIntoObject, replaceMethod } from "./util";
 
 const InventoryCategories = {

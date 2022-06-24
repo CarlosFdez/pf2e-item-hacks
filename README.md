@@ -12,7 +12,7 @@ It is recommended to use VSCode for the project, but anything else that can hand
 
 ## Exporting types from the core system implementation
 
-Add the following to the main pathfinder tsconfig.json and run `npx tsc`
+Add the following to the main pathfinder tsconfig.json's compilerOptions and run `npx tsc`
 ```json
 {
         "noEmit": false,
@@ -22,7 +22,7 @@ Add the following to the main pathfinder tsconfig.json and run `npx tsc`
 }
 ```
 
-Copy dist/types to types/
+Copy dist/types in the core project to types/ here
 Copy types to types/types (so that its types/types/foundry...)
 Update types/en.json in this repo
 Update types/global.d.ts
