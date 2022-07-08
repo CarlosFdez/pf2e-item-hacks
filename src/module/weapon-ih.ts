@@ -36,24 +36,26 @@ export function setupWeapon() {
 
             const isBattlezoo = weaponIsBattlezoo(this);
             const isVirtual = weaponIsVirtual(this);
+            const system = this.data.data;
 
             // These items shouldn't get prices or names changed
             if (isBattlezoo || isVirtual) {
-                this.data.data.price = duplicate(basePrice);
+                const value = new game.pf2e.Coins(basePrice.value);
+                system.price = { ...basePrice, value };
             }
 
             if (isVirtual) {
-                this.data.data.level.value = this.data._source.data.level.value;
-                this.data.data.weight.value = "";
-                this.data.data.equippedBulk.value = "";
+                system.level.value = this.data._source.data.level.value;
+                system.weight.value = "";
+                system.equippedBulk.value = "";
             }
 
             if (this.isBattlezoo) {
                 const goldValue = coinValueInCopper(basePrice.value) / 100;
                 const level = lookup(WeaponArmorRefinementCosts, goldValue);;
-                this.data.data.level.value = level;
-                this.data.data.potencyRune.value = lookup(WeaponPotencyLevels, level) as OneToFour;
-                this.data.data.strikingRune.value = STRIKING_RUNE_TYPES[lookup(WeaponStrikingLevels, level)];
+                system.level.value = level;
+                system.potencyRune.value = lookup(WeaponPotencyLevels, level) as OneToFour;
+                system.strikingRune.value = STRIKING_RUNE_TYPES[lookup(WeaponStrikingLevels, level)];
             }
 
             return result;

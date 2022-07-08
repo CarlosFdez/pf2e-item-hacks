@@ -7,7 +7,7 @@ declare global {
             system: {
                 sluggify: (str: string) => string;
             };
-            CoinsPF2e: typeof CoinsPF2e;
+            Coins: typeof CoinsPF2e;
         };
     }
 
