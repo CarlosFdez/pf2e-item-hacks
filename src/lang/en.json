@@ -5,7 +5,7 @@
         "ActionTracking.name": "Action Tracking",
         "ActionTracking.hint": "Enables uses tracking in the character sheet for actions and feats",
         "VirtualItems.name": "Virtual Items",
-        "VirtualItems.hint": "Enables the use of the \"virtual\" other tag to treat a weapon as pseudo-synthetic",
+        "VirtualItems.hint": "Enables the use of the \"virtual\" other tag which disables price/level auto-scaling",
         "ItemCharges.name": "Charges for all Items",
         "ItemCharges.hint": "Enable the use of optional charges for all items",
         "Battlezoo.name": "Battlezoo Partial Extended Support",

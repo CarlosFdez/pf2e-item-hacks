@@ -32,7 +32,7 @@ async function addActionTracking(action: ActionItemPF2e | FeatPF2e, $element: JQ
         $element.find(".item-name").append(`<a class="action-tracking unlimited"><i class="fas fa-infinity"></i></a>`);
         return;
     } else {
-        const template = "modules/pf2e-action-tracking/templates/action-values.html";
+        const template = "modules/pf2e-item-hacks/templates/action-values.html";
         $element.find(".item-name").append(await renderTemplate(template, { slug, uses, frequencies: Frequencies }));
     }
 }
