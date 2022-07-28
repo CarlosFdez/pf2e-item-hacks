@@ -34,12 +34,17 @@ type InventorySheetData = Record<string, { label: string, items: ItemSheetData[]
 function updateInventory(inventory: InventorySheetData) {
     const precious = inventory["equipment"].items.filter((i) => i.item.traits.has("precious"));
     const ammo = inventory["consumable"].items.filter(
-        (i: ItemSheetData<ConsumablePF2e>) => i.item.consumableType === "ammo");
-    const scrollsWands = inventory["consumable"].items.filter(
-        (i: ItemSheetData<ConsumablePF2e>) => ["scroll", "wand"].includes(i.item.consumableType));
+        (i: ItemSheetData<ConsumablePF2e>) => i.item.consumableType === "ammo",
+    );
+    const scrollsWands = inventory["consumable"].items.filter((i: ItemSheetData<ConsumablePF2e>) =>
+        ["scroll", "wand"].includes(i.item.consumableType),
+    );
 
     const extracted = new Set([
-        ...precious.map(i => i.item.id), ...ammo.map(i => i.item.id), ...scrollsWands.map(i => i.item.id)]);
+        ...precious.map((i) => i.item.id),
+        ...ammo.map((i) => i.item.id),
+        ...scrollsWands.map((i) => i.item.id),
+    ]);
 
     if (precious.length) {
         insertIntoObject(inventory, {
@@ -71,4 +76,4 @@ function updateInventory(inventory: InventorySheetData) {
     }
 }
 
-export default InventoryCategories;
+export { InventoryCategories }

@@ -1,5 +1,4 @@
-import { setupActionTracking } from "./module/action-tracking";
-import InventoryCategories from "./module/inventory-categories";
+import { InventoryCategories } from "./module/inventory-categories";
 import { registerSettings } from "./module/settings";
 import { setupWeapon } from "./module/weapon-ih";
 
@@ -9,22 +8,13 @@ import './styles/styles.scss';
 Hooks.on("init", () => {
     registerSettings();
 
-    const virtualItems = game.settings.get("pf2e-item-hacks", "virtual-items");
-    const battlezoo = game.settings.get("pf2e-item-hacks", "battlezoo");
+    const itemTags = game.settings.get("pf2e-item-hacks", "item-tags");
 
-    if (virtualItems) {
+    if (itemTags) {
         const other: Record<string, string> = CONFIG.PF2E.otherWeaponTags;
-        other["virtual"] = "Virtual Weapon";
-    }
-
-    if (virtualItems || battlezoo) {
+        other["price-unlinked"] = "Disable Price Automation";
+        other["gold-scaling"] = "Gold Scaling";
         setupWeapon();
-    }
-});
-
-Hooks.on("setup", () => {
-    if (game.settings.get("pf2e-item-hacks", "action-tracking")) {
-        setupActionTracking();
     }
 });
 

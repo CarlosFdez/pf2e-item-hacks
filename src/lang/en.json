@@ -4,14 +4,13 @@
         "InventoryCategories.hint": "Adds additional sections to inventory for ammo, scrolls/wands, and materials",
         "ActionTracking.name": "Action Tracking",
         "ActionTracking.hint": "Enables uses tracking in the character sheet for actions and feats",
-        "VirtualItems.name": "Virtual Items",
-        "VirtualItems.hint": "Enables the use of the \"virtual\" other tag which disables price/level auto-scaling",
+        "ItemTags.name": "Item Tags",
+        "ItemTags.hint": "Enables the use additional item tags to add or change automation",
         "ItemCharges.name": "Charges for all Items",
-        "ItemCharges.hint": "Enable the use of optional charges for all items",
-        "Battlezoo.name": "Battlezoo Partial Extended Support",
-        "Battlezoo.hint": "Items with the \"battlezoo\" trait enables certain features and disables price auto-calculation"
+        "ItemCharges.hint": "Enable the use of optional charges for all items"
     },
     "PF2E-IH.ItemCategories": {
+        "Bombs": "Bombs",
         "Materials": "Precious Materials",
         "Ammunition": "Ammunition",
         "ScrollsWands": "Scrolls and Wands"

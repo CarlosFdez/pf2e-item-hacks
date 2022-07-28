@@ -1,4 +1,4 @@
-type Abstract<T> = Function & {prototype: T};
+type Abstract<T> = Function & { prototype: T };
 type Constructor<T> = new (...args: any[]) => T;
 export type Class<T> = Abstract<T> | Constructor<T>;
 type UnknownFunction = (...args: unknown[]) => unknown;
@@ -23,11 +23,20 @@ export function isFeatItem(item?: unknown): item is FeatPF2e {
 export function replaceMethod<T, K extends keyof T>(
     object: Class<T>,
     name: K,
-    impl: (this: T, original: T[K], ...args: T[K] extends UnknownFunction ? Parameters<T[K]> : never) => T[K] extends UnknownFunction ? ReturnType<T[K]> : never
+    impl: (
+        this: T,
+        original: T[K],
+        ...args: T[K] extends UnknownFunction ? Parameters<T[K]> : never
+    ) => T[K] extends UnknownFunction ? ReturnType<T[K]> : never,
 ) {
-    if (!object) throw new Error(`PF2E Action Tracking | Attempted to override property ${name} for an object that does not exist`)
+    if (!object) {
+        throw new Error(
+            `PF2E Action Tracking | Attempted to override property ${String(name)} for an object that does not exist`
+        );
+    }
+
     const original = object.prototype[name];
-    object.prototype[name] = function(...args) {
+    object.prototype[name] = function (...args) {
         return impl.apply(this, [original.bind(this), ...args]);
     };
 }

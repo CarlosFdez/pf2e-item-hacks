@@ -32,5 +32,7 @@ export declare const PF2ECONFIG: {
         };
     };
     otherWeaponTags: Record<string, string>;
+    otherArmorTags: Record<string, string>;
+    otherEquipmentTags: Record<string, string>;
     armorTraits: Record<string, string>;
 }

@@ -1,4 +1,4 @@
-import { WeaponArmorRefinementCosts, WeaponPotencyLevels, WeaponStrikingLevels } from "./battlezoo";
+import { WeaponArmorRefinementCosts, WeaponPotencyLevels, WeaponStrikingLevels } from "./autoscale-values";
 import { lookup } from "./util";
 
 function noCoins() {
@@ -19,13 +19,11 @@ export function setupWeapon() {
     prepared = true;
 
     class WeaponIH extends CONFIG.PF2E.Item.documentClasses.weapon {
-        get isBattlezoo() {
-            return weaponIsBattlezoo(this);
-        }
-
         override generateMagicName(...args: unknown[]): string {
-            const isVirtual = weaponIsVirtual(this);
-            if (this.isBattlezoo || isVirtual) return this.data.name;
+            const { otherTags } = this.data.data.traits;
+            const isGoldScaling = otherTags.includes("gold-scaling");
+            const isVirtual = otherTags.includes("price-unlinked");
+            if (isGoldScaling || isVirtual) return this.data.name;
 
             return super.generateMagicName.apply(this, args);
         }
@@ -34,12 +32,13 @@ export function setupWeapon() {
             const basePrice = duplicate(this.price);
             const result = super.processMaterialAndRunes.apply(this, args);
 
-            const isBattlezoo = weaponIsBattlezoo(this);
-            const isVirtual = weaponIsVirtual(this);
+            const { otherTags } = this.data.data.traits;
+            const isGoldScaling = otherTags.includes("gold-scaling");
+            const isVirtual = isGoldScaling || otherTags.includes("price-unlinked");
             const system = this.data.data;
 
             // These items shouldn't get prices or names changed
-            if (isBattlezoo || isVirtual) {
+            if (isVirtual) {
                 const value = new game.pf2e.Coins(basePrice.value);
                 system.price = { ...basePrice, value };
             }
@@ -50,9 +49,9 @@ export function setupWeapon() {
                 system.equippedBulk.value = "";
             }
 
-            if (this.isBattlezoo) {
+            if (isGoldScaling) {
                 const goldValue = coinValueInCopper(basePrice.value) / 100;
-                const level = lookup(WeaponArmorRefinementCosts, goldValue);;
+                const level = lookup(WeaponArmorRefinementCosts, goldValue);
                 system.level.value = level;
                 system.potencyRune.value = lookup(WeaponPotencyLevels, level) as OneToFour;
                 system.strikingRune.value = STRIKING_RUNE_TYPES[lookup(WeaponStrikingLevels, level)];
@@ -64,14 +63,3 @@ export function setupWeapon() {
 
     CONFIG.PF2E.Item.documentClasses.weapon = WeaponIH;
 }
-
-function weaponIsBattlezoo(weapon: WeaponPF2e) {
-    const traits: Set<string> = weapon.traits;
-    return game.settings.get("pf2e-item-hacks", "battlezoo") && traits.has("hb_battlezoo");
-}
-
-function weaponIsVirtual(weapon: WeaponPF2e) {
-    const otherTags: string[] = weapon.data.data.traits.otherTags;
-    return game.settings.get("pf2e-item-hacks", "virtual-items") && otherTags.includes("virtual");
-}
-
