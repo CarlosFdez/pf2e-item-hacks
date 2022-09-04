@@ -6,6 +6,11 @@ declare module foundry {
          * @property data The constructed data object for the document.
          */
         class BaseActor extends abstract.Document {
+            prototypeToken: foundry.data.PrototypeTokenData;
+
+            /** The default icon used for newly created Actor documents */
+            static DEFAULT_ICON: ImagePath;
+
             static override get schema(): ConstructorOf<data.ActorData<BaseActor, BaseActiveEffect, BaseItem>>;
 
             static override get metadata(): ActorMetadata;
@@ -35,10 +40,10 @@ declare module foundry {
                 insertKeys?: boolean;
                 insertValues?: boolean;
                 enforceTypes?: boolean;
-            }): this["data"]["data"];
+            }): this["data"]["system"];
 
             protected override _preCreate(
-                data: PreDocumentId<this["data"]["_source"]>,
+                data: PreDocumentId<this["_source"]>,
                 options: DocumentModificationContext,
                 user: BaseUser
             ): Promise<void>;
@@ -54,6 +59,9 @@ declare module foundry {
             readonly data: data.ActorData<BaseActor, BaseActiveEffect, BaseItem>;
 
             readonly parent: BaseToken | null;
+
+            // V10 shim
+            readonly system: this["data"]["system"];
 
             get documentName(): typeof BaseActor["metadata"]["name"];
         }

@@ -14,8 +14,9 @@ declare module foundry {
             ): boolean;
         }
 
-        interface BaseCombatant {
+        interface BaseCombatant extends data.CombatantSource {
             readonly data: foundry.data.CombatantData<this>;
+
             readonly parent: BaseCombat | null;
         }
 

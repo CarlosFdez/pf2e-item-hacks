@@ -6,12 +6,47 @@ declare module foundry {
          * @property data The constructed data object for the document.
          */
         class BaseToken extends abstract.Document {
+            readonly actorLink: boolean;
+
+            displayName: TokenDisplayMode;
+
+            disposition: TokenDisposition;
+
+            width: number;
+
+            height: number;
+
+            texture: {
+                src: VideoPath;
+                scaleX: number;
+                scaleY: number;
+                offsetX: number;
+                offsetY: number;
+                rotation: number | null;
+                tint: HexColorString;
+            };
+
+            light: foundry.data.LightData<this>;
+
+            sight: {
+                enabled: boolean;
+                range: number;
+                angle: number;
+                color: HexColorString;
+                attenuation: number;
+                brightness: number;
+                saturation: number;
+                contrast: number;
+                visionMode: object;
+            };
+
+            elevation: number;
+
+            effects: VideoPath[];
+
             static override get schema(): typeof data.TokenData;
 
             static override get metadata(): TokenMetadata;
-
-            /** A convenience reference to the name which should be displayed for the Token */
-            get name(): string;
 
             /** Is a user able to update an existing Token? */
             protected static _canUpdate(user: BaseUser, doc: BaseToken, data: data.TokenData): boolean;

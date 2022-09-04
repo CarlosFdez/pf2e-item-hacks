@@ -2,8 +2,12 @@ import { Class, insertIntoObject, replaceMethod } from "./util";
 
 const InventoryCategories = {
     ready: () => {
-        const CharacterSheet = Actors.registeredSheets.find((s) => s.name === "CharacterSheetPF2e") as unknown as Class<CharacterSheetPF2e>;
-        const LootSheet = Actors.registeredSheets.find((s) => s.name === "LootSheetPF2e") as unknown as Class<LootSheetPF2e>;
+        const CharacterSheet = Actors.registeredSheets.find(
+            (s) => s.name === "CharacterSheetPF2e",
+        ) as unknown as Class<CharacterSheetPF2e>;
+        const LootSheet = Actors.registeredSheets.find(
+            (s) => s.name === "LootSheetPF2e",
+        ) as unknown as Class<LootSheetPF2e>;
 
         replaceMethod(CharacterSheet, "getData", async (original, options) => {
             const data = await original(options);
@@ -29,7 +33,7 @@ export interface ItemSheetData<D extends PhysicalItemPF2e = PhysicalItemPF2e> {
     hasCharges: boolean;
     heldItems?: ItemSheetData[];
 }
-type InventorySheetData = Record<string, { label: string, items: ItemSheetData[] }>;
+type InventorySheetData = Record<string, { label: string; items: ItemSheetData[] }>;
 
 function updateInventory(inventory: InventorySheetData) {
     const precious = inventory["equipment"].items.filter((i) => i.item.traits.has("precious"));
@@ -76,4 +80,4 @@ function updateInventory(inventory: InventorySheetData) {
     }
 }
 
-export { InventoryCategories }
+export { InventoryCategories };

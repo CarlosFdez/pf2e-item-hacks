@@ -20,10 +20,10 @@ export function setupWeapon() {
 
     class WeaponIH extends CONFIG.PF2E.Item.documentClasses.weapon {
         override generateMagicName(...args: unknown[]): string {
-            const { otherTags } = this.data.data.traits;
+            const { otherTags } = this.system.traits;
             const isGoldScaling = otherTags.includes("gold-scaling");
             const isVirtual = otherTags.includes("price-unlinked");
-            if (isGoldScaling || isVirtual) return this.data.name;
+            if (isGoldScaling || isVirtual) return this.name;
 
             return super.generateMagicName.apply(this, args);
         }
@@ -32,19 +32,13 @@ export function setupWeapon() {
             const basePrice = duplicate(this.price);
             const result = super.processMaterialAndRunes.apply(this, args);
 
-            const { otherTags } = this.data.data.traits;
+            const { system } = this;
+            const { otherTags } = system.traits;
             const isGoldScaling = otherTags.includes("gold-scaling");
-            const isVirtual = isGoldScaling || otherTags.includes("price-unlinked");
-            const system = this.data.data;
-
-            // These items shouldn't get prices or names changed
-            if (isVirtual) {
-                const value = new game.pf2e.Coins(basePrice.value);
-                system.price = { ...basePrice, value };
-            }
+            const isVirtual = isWeaponVirtual(this);
 
             if (isVirtual) {
-                system.level.value = this.data._source.data.level.value;
+                system.level.value = this._source.system.level.value;
                 system.weight.value = "";
                 system.equippedBulk.value = "";
             }
@@ -59,7 +53,18 @@ export function setupWeapon() {
 
             return result;
         }
+
+        override computeAdjustedPrice() {
+            if (isWeaponVirtual(this)) return null;
+            return super.computeAdjustedPrice();
+        }
     }
 
     CONFIG.PF2E.Item.documentClasses.weapon = WeaponIH;
+}
+
+function isWeaponVirtual(weapon: WeaponPF2e) {
+    const { otherTags } = weapon.system.traits;
+    const isGoldScaling = otherTags.includes("gold-scaling");
+    return isGoldScaling || otherTags.includes("price-unlinked");
 }

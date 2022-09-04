@@ -31,7 +31,7 @@ export function replaceMethod<T, K extends keyof T>(
 ) {
     if (!object) {
         throw new Error(
-            `PF2E Action Tracking | Attempted to override property ${String(name)} for an object that does not exist`
+            `PF2E Action Tracking | Attempted to override property ${String(name)} for an object that does not exist`,
         );
     }
 
@@ -53,7 +53,7 @@ export const PHYSICAL_ITEM_TYPES = new Set([
 
 export function insertIntoObject<T extends Record<string | number | symbol, unknown>>(
     object: T,
-    options: { before?: keyof T, after?: keyof T, key: keyof T, value: unknown }
+    options: { before?: keyof T; after?: keyof T; key: keyof T; value: unknown },
 ) {
     const result: Record<string | number | symbol, unknown> = {};
     for (const [key, value] of Object.entries(object)) {

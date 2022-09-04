@@ -2,6 +2,11 @@ declare module foundry {
     module documents {
         /** The Item document model. */
         class BaseItem extends abstract.Document {
+            sort: number;
+
+            /** The default icon used for newly created Item documents */
+            static DEFAULT_ICON: ImagePath;
+
             static override get schema(): ConstructorOf<data.ItemData<BaseItem, BaseActiveEffect>>;
 
             static override get metadata(): ItemMetadata;
@@ -34,11 +39,14 @@ declare module foundry {
                 insertKeys?: boolean;
                 insertValues?: boolean;
                 enforceTypes?: boolean;
-            }): this["data"]["data"];
+            }): this["data"]["system"];
         }
 
         interface BaseItem {
             readonly data: data.ItemData<BaseItem, BaseActiveEffect>;
+
+            /** Shim for V10 preparation */
+            readonly system: this["data"]["system"];
 
             readonly parent: BaseActor | null;
 

@@ -17,7 +17,12 @@ declare global {
         /** A subsidiary collection which contains the more minimal index of the pack */
         index: CompendiumIndex;
 
+        /** A debounced function which will clear the contents of the Compendium pack if it is not accessed frequently. */
         protected _flush: () => unknown;
+
+        /** Has this Compendium pack been fully indexed? */
+        indexed: boolean;
+
         /**
          * The amount of time that Document instances within this CompendiumCollection are held in memory.
          * Accessing the contents of the Compendium pack extends the duration of this lifetime.
@@ -26,6 +31,9 @@ declare global {
 
         /** The named game setting which contains Compendium configurations. */
         static CONFIG_SETTING: "compendiumConfiguration";
+
+        /** The default index fields which should be retrieved for each Compendium document type */
+        static INDEX_FIELDS: Record<CompendiumDocumentType, string[]>;
 
         /**
          * Create a new Compendium Collection using provided metadata.
@@ -135,21 +143,21 @@ declare global {
 
         protected override _onCreateDocuments(
             documents: TDocument[],
-            result: TDocument["data"]["_source"][],
+            result: TDocument["_source"][],
             options: DocumentModificationContext,
             userId: string
         ): void;
 
         protected override _onUpdateDocuments(
             documents: TDocument[],
-            result: TDocument["data"]["_source"][],
+            result: TDocument["_source"][],
             options: DocumentModificationContext,
             userId: string
         ): void;
 
         protected override _onDeleteDocuments(
             documents: TDocument[],
-            result: TDocument["data"]["_source"][],
+            result: TDocument["_source"][],
             options: DocumentModificationContext,
             userId: string
         ): void;

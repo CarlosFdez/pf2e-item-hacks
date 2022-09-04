@@ -23,6 +23,7 @@ interface PhysicalItemPF2e extends ItemPF2e {
     get isCursed(): boolean;
     get isTemporary(): boolean;
     get isDamaged(): boolean;
+    computeAdjustedPrice?(): CoinsPF2e | null;
 }
 
 interface ArmorPF2e extends PhysicalItemPF2e {}
@@ -45,6 +46,7 @@ interface WeaponPF2e extends PhysicalItemPF2e {
     /** Generate a weapon name base on precious-material composition and runes */
     generateMagicName(): string;
     processMaterialAndRunes(): void;
+    computeAdjustedPrice(): CoinsPF2e | null;
 }
 
 declare type BasePhysicalItemSource<TType extends PhysicalItemType = PhysicalItemType, TSystemSource extends PhysicalSystemSource = PhysicalSystemSource> = BaseItemSourcePF2e<TType, TSystemSource>;

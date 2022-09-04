@@ -1,5 +1,4 @@
 import type * as TinyMCE from "tinymce";
-import * as PIXI from "pixi.js";
 
 declare global {
     interface Config<
@@ -9,8 +8,8 @@ declare global {
         TChatLog extends ChatLog = ChatLog,
         TChatMessage extends ChatMessage = ChatMessage,
         TCombat extends Combat = Combat,
-        TCombatant extends Combatant<TActor | null> = Combatant<TActor | null>,
-        TCombatTracker extends CombatTracker<TCombat> = CombatTracker<TCombat>,
+        TCombatant extends Combatant<TCombat | null, TActor | null> = Combatant<TCombat | null, TActor | null>,
+        TCombatTracker extends CombatTracker<TCombat | null> = CombatTracker<TCombat | null>,
         TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory,
         TFogExploration extends FogExploration = FogExploration,
         TFolder extends Folder = Folder,
@@ -44,24 +43,36 @@ declare global {
         /** Configuration for the Actor document */
         Actor: {
             documentClass: {
-                new (data: PreCreate<TActor["data"]["_source"]>, context?: DocumentConstructionContext<TActor>): TActor;
+                new (data: PreCreate<TActor["_source"]>, context?: DocumentConstructionContext<TActor>): TActor;
             };
             collection: ConstructorOf<Actors<TActor>>;
-            sheetClasses: Record<string, Record<string, {
-                id: string;
-                cls: typeof ActorSheet;
-                default: boolean;
-            }>>;
+            sheetClasses: Record<
+                string,
+                Record<
+                    string,
+                    {
+                        id: string;
+                        cls: typeof ActorSheet;
+                        default: boolean;
+                    }
+                >
+            >;
             typeLabels: Record<string, string | undefined>;
         };
 
-        /**
-         * Configuration for the FogExploration document
-         */
+        /** Configuration for the Cards primary Document type */
+        Cards: {
+            collection: WorldCollection<Cards>;
+            documentClass: ConstructorOf<Cards>;
+            sidebarIcon: string;
+            presets: Record<string, { type: string; label: string; source: string }>;
+        };
+
+        /** Configuration for the FogExploration document */
         FogExploration: {
             documentClass: {
                 new (
-                    data: PreCreate<TFogExploration["data"]["_source"]>,
+                    data: PreCreate<TFogExploration["_source"]>,
                     context?: DocumentConstructionContext<TFogExploration>
                 ): TFogExploration;
             };
@@ -71,10 +82,7 @@ declare global {
         /** Configuration for the Folder document */
         Folder: {
             documentClass: {
-                new (
-                    data: PreCreate<TFolder["data"]["_source"]>,
-                    context?: DocumentConstructionContext<TFolder>
-                ): TFolder;
+                new (data: PreCreate<TFolder["_source"]>, context?: DocumentConstructionContext<TFolder>): TFolder;
             };
             collection: typeof Folders;
         };
@@ -85,7 +93,7 @@ declare global {
             collection: typeof Messages;
             documentClass: {
                 new (
-                    data: PreCreate<TChatMessage["data"]["_source"]>,
+                    data: PreCreate<TChatMessage["_source"]>,
                     context?: DocumentConstructionContext<TChatMessage>
                 ): TChatMessage;
             };
@@ -96,24 +104,27 @@ declare global {
         /** Configuration for Item document */
         Item: {
             documentClass: {
-                new (data: PreCreate<TItem["data"]["_source"]>, context?: DocumentConstructionContext<TItem>): TItem;
+                new (data: PreCreate<TItem["_source"]>, context?: DocumentConstructionContext<TItem>): TItem;
             };
             collection: typeof Items;
-            sheetClasses: Record<string, Record<string, {
-                id: string;
-                cls: typeof ItemSheet;
-                default: boolean;
-            }>>;
+            sheetClasses: Record<
+                string,
+                Record<
+                    string,
+                    {
+                        id: string;
+                        cls: typeof ItemSheet;
+                        default: boolean;
+                    }
+                >
+            >;
             typeLabels: Record<string, string | undefined>;
         };
 
         /** Configuration for the Combat document */
         Combat: {
             documentClass: {
-                new (
-                    data: PreCreate<TCombat["data"]["_source"]>,
-                    context?: DocumentConstructionContext<TCombat>
-                ): TCombat;
+                new (data: PreCreate<TCombat["_source"]>, context?: DocumentConstructionContext<TCombat>): TCombat;
             };
             collection: typeof CombatEncounters;
             defeatedStatusId: string;
@@ -136,21 +147,15 @@ declare global {
 
         /** Configuration for the Macro document */
         Macro: {
-            documentClass: {
-                new (data: PreCreate<TMacro["data"]["_source"]>, context?: DocumentConstructionContext<TMacro>): TMacro;
-            };
+            documentClass: ConstructorOf<TMacro>;
             collection: typeof Macros;
             sidebarIcon: string;
         };
 
         /** Configuration for Scene document */
         Scene: {
-            documentClass: {
-                new (data: PreCreate<TScene["data"]["_source"]>, context?: DocumentConstructionContext<TScene>): TScene;
-            };
-
+            documentClass: ConstructorOf<TScene>;
             collection: typeof Scenes;
-            notesClass: any;
             sidebarIcon: string;
         };
 
@@ -169,9 +174,7 @@ declare global {
 
         /** Configuration for the User document */
         User: {
-            documentClass: {
-                new (data: PreCreate<TUser["data"]["_source"]>, context?: DocumentConstructionContext<TUser>): TUser;
-            };
+            documentClass: ConstructorOf<TUser>;
             collection: typeof Users;
             permissions: undefined;
         };
@@ -191,7 +194,7 @@ declare global {
         ActiveEffect: {
             documentClass: {
                 new (
-                    data: PreCreate<TActiveEffect["data"]["_source"]>,
+                    data: PreCreate<TActiveEffect["_source"]>,
                     context?: DocumentConstructionContext<TActiveEffect>
                 ): TActiveEffect;
             };
@@ -200,8 +203,8 @@ declare global {
         /** Configuration for the Combatant document */
         Combatant: {
             documentClass: new (
-                data: PreCreate<TCombat["turns"][number]["data"]["_source"]>,
-                context?: DocumentConstructionContext<TCombat["turns"][number]>
+                data: PreCreate<TCombatant["_source"]>,
+                context?: DocumentConstructionContext<TCombatant>
             ) => TCombatant;
         };
 
@@ -235,7 +238,7 @@ declare global {
         /** Configuration for the Token embedded document type and its representation on the game Canvas */
         Token: {
             documentClass: ConstructorOf<TTokenDocument>;
-            objectClass: new (...args: any[]) => TTokenDocument["object"];
+            objectClass: ConstructorOf<TTokenDocument["object"]>;
             layerClass: ConstructorOf<TTokenDocument["object"]["layer"]>;
             prototypeSheetClass: ConstructorOf<TTokenDocument["sheet"]>;
         };
@@ -300,10 +303,6 @@ declare global {
                 lighting: {
                     group: "effects";
                     layerClass: ConstructorOf<TAmbientLightDocument["object"]["layer"]>;
-                };
-                sight: {
-                    group: "effects";
-                    layerClass: ConstructorOf<SightLayer<TTokenDocument["object"], TFogExploration>>;
                 };
                 weather: {
                     group: "effects";
@@ -396,6 +395,12 @@ declare global {
             };
         };
 
+        /** Configure the default Token text style so that it may be reused and overridden by modules */
+        canvasTextStyle: PIXI.TextStyle;
+
+        /** Available Weather Effects implemntations */
+        weatherEffects: Record<string, SpecialEffect>;
+
         /** Configuration for dice rolling behaviors in the Foundry VTT client */
         Dice: {
             types: Array<typeof Die | typeof DiceTerm>;
@@ -410,9 +415,7 @@ declare global {
             randomUniform: Function;
         };
 
-        /**
-         * The control icons used for rendering common HUD operations
-         */
+        /** The control icons used for rendering common HUD operations */
         controlIcons: {
             combat: string;
             visibility: string;
@@ -424,29 +427,16 @@ declare global {
             [key: string]: string | undefined;
         };
 
-        /**
-         * Suggested font families that are displayed wherever a choice is presented
-         */
+        /** Suggested font families that are displayed wherever a choice is presented */
         fontFamilies: string[];
 
-        /**
-         * The default font family used for text labels on the PIXI Canvas
-         */
+        /** The default font family used for text labels on the PIXI Canvas */
         defaultFontFamily: string;
 
-        /**
-         * Available Weather Effects implemntations
-         */
-        weatherEffects: any;
-
-        /**
-         * An array of status effect icons which can be applied to Tokens
-         */
+        /** An array of status effect icons which can be applied to Tokens */
         statusEffects: string[];
 
-        /**
-         * A mapping of core audio effects used which can be replaced by systems or mods
-         */
+        /** A mapping of core audio effects used which can be replaced by systems or mods */
         sounds: {
             dice: AudioPath;
             lock: string;
@@ -454,17 +444,13 @@ declare global {
             combat: string;
         };
 
-        /**
-         * Define the set of supported languages for localization
-         */
+        /** Define the set of supported languages for localization */
         supportedLanguages: {
             en: string;
             [key: string]: string;
         };
 
-        /**
-         * Maximum canvas zoom scale
-         */
+        /** Maximum canvas zoom scale */
         maxCanvasZoom: number;
 
         /* -------------------------------------------- */
@@ -473,9 +459,8 @@ declare global {
 
         /** Default configuration options for TinyMCE editors */
         // See https://www.tiny.cloud/docs/configure/content-appearance/
-        TinyMCE: Omit<TinyMCE.EditorSettings, "content_css" | "style_formats"> & {
-            content_css: string[];
-            style_formats: NonNullable<TinyMCE.EditorSettings["style_formats"]>;
+        TinyMCE: Omit<TinyMCE.EditorOptions, "style_formats"> & {
+            style_formats: NonNullable<TinyMCE.EditorOptions["style_formats"]>;
         };
 
         ui: {

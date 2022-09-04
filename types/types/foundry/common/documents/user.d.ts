@@ -11,6 +11,8 @@ declare module foundry {
         class BaseUser extends abstract.Document {
             constructor(data: PreCreate<data.UserSource>, context?: DocumentConstructionContext);
 
+            flags: Record<string, Record<string, unknown>>;
+
             readonly role: UserRole;
 
             static override get schema(): typeof data.UserData;
@@ -56,6 +58,8 @@ declare module foundry {
             readonly data: data.UserData<this>;
 
             readonly parent: null;
+
+            get documentName(): "User";
         }
 
         interface UserMetadata extends abstract.DocumentMetadata {
