@@ -8,7 +8,7 @@ declare module foundry {
 
             override testUserPermission(
                 user: documents.BaseUser,
-                permission: DocumentPermission | DocumentPermissionNumber,
+                permission: DocumentOwnershipString | DocumentOwnershipLevel,
                 { exact }?: { exact?: boolean }
             ): boolean;
 
@@ -43,8 +43,8 @@ declare module foundry {
             isEmbedded: true;
             permissions: {
                 create: "TEMPLATE_CREATE";
-                update: typeof BaseMeasuredTemplate["_canModify"];
-                delete: typeof BaseMeasuredTemplate["_canModify"];
+                update: (typeof BaseMeasuredTemplate)["_canModify"];
+                delete: (typeof BaseMeasuredTemplate)["_canModify"];
             };
         }
     }

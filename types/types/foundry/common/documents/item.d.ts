@@ -5,7 +5,7 @@ declare module foundry {
             sort: number;
 
             /** The default icon used for newly created Item documents */
-            static DEFAULT_ICON: ImagePath;
+            static DEFAULT_ICON: ImageFilePath;
 
             static override get schema(): ConstructorOf<data.ItemData<BaseItem, BaseActiveEffect>>;
 
@@ -18,7 +18,7 @@ declare module foundry {
 
             override testUserPermission(
                 user: BaseUser,
-                permission: DocumentPermission | DocumentPermissionNumber,
+                permission: DocumentOwnershipString | DocumentOwnershipLevel,
                 { exact }?: { exact?: boolean }
             ): boolean;
 
@@ -50,7 +50,7 @@ declare module foundry {
 
             readonly parent: BaseActor | null;
 
-            get documentName(): typeof BaseItem["metadata"]["name"];
+            get documentName(): (typeof BaseItem)["metadata"]["name"];
         }
 
         interface ItemMetadata extends abstract.DocumentMetadata {

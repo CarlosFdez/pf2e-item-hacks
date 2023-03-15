@@ -28,6 +28,24 @@ declare global {
                 /** Perform one-time initialization tasks which only occur when the Document is first constructed. */
                 protected _initialize(): void;
 
+                /**
+                 * Initialize the source data for a new DataModel instance.
+                 * One-time migrations and initial cleaning operations are applied to the source data.
+                 * @param data      The candidate source data from which the model will be constructed
+                 * @param [options] Options provided to the model constructor
+                 * @returns Migrated and cleaned source data which will be stored to the model instance
+                 * System note: actually in `DataModel`
+                 */
+                protected _initializeSource(
+                    data: Record<string, unknown>,
+                    options?: DocumentConstructionContext<this>
+                ): this["_source"];
+
+                /**
+                 * Reset the state of this data instance back to mirror the contained source data, erasing any changes.
+                 */
+                reset(): void;
+
                 /* -------------------------------------------- */
                 /*  Configuration                               */
                 /* -------------------------------------------- */
@@ -129,7 +147,7 @@ declare global {
                  * @param user The User being tested
                  * @returns A numeric permission level from CONST.ENTITY_PERMISSIONS or null
                  */
-                getUserLevel(user: documents.BaseUser): PermissionLevel | null;
+                getUserLevel(user: documents.BaseUser): DocumentOwnershipLevel | null;
 
                 /**
                  * Test whether a certain User has a requested permission level (or greater) over the Document
@@ -141,7 +159,7 @@ declare global {
                  */
                 testUserPermission(
                     user: documents.BaseUser,
-                    permission: DocumentPermission | DocumentPermissionNumber,
+                    permission: DocumentOwnershipString | DocumentOwnershipLevel,
                     { exact }?: { exact?: boolean }
                 ): boolean;
 
@@ -183,12 +201,11 @@ declare global {
                  * const data = [{name: "Compendium Actor", type: "character", img: "path/to/profile.jpg"}];
                  * const created = await Actor.createDocuments(data, {pack: "mymodule.mypack"});
                  */
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                static createDocuments<T extends ConstructorOf<any>>(
-                    this: T,
-                    data?: PreCreate<InstanceType<T>["_source"]>[],
-                    context?: DocumentModificationContext
-                ): Promise<InstanceType<T>[]>;
+                static createDocuments<T extends Document>(
+                    this: ConstructorOf<T>,
+                    data?: (T | PreCreate<T["_source"]>)[],
+                    context?: DocumentModificationContext<T>
+                ): Promise<T[]>;
 
                 /**
                  * Update multiple Document instances using provided differential data.
@@ -216,10 +233,11 @@ declare global {
                  * const updated = await Actor.updateDocuments([{_id: actor.id, name: "New Name"}], {pack: "mymodule.mypack"});
                  */
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                static updateDocuments<T extends ConstructorOf<any>>(
-                    updates?: DocumentUpdateData<InstanceType<T>>[],
+                static updateDocuments<T extends Document>(
+                    this: ConstructorOf<T>,
+                    updates?: DocumentUpdateData<T>[],
                     context?: DocumentModificationContext
-                ): Promise<InstanceType<T>[]>;
+                ): Promise<T[]>;
 
                 /**
                  * Delete one or multiple existing Documents using an array of provided ids.
@@ -597,7 +615,7 @@ declare global {
         /** Block the dispatch of preCreate hooks for this operation */
         noHook?: boolean;
         /** A Compendium pack identifier within which the Documents should be modified */
-        pack?: string;
+        pack?: string | null;
         /** Return an index of the Document collection, used only during a get operation. */
         index?: boolean;
         /** When performing a creation operation, keep the provided _id instead of clearing it. */

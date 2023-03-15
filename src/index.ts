@@ -1,9 +1,9 @@
 import { InventoryCategories } from "./module/inventory-categories";
 import { registerSettings } from "./module/settings";
-import { setupWeapon } from "./module/weapon-ih";
+import { setupWeapon } from "./module/weapon/weapon-ih";
 
 // will be extracted by webpack
-import './styles/styles.scss';
+import "./styles/styles.scss";
 
 Hooks.on("init", () => {
     registerSettings();

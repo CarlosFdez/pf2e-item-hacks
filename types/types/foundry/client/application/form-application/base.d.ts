@@ -41,6 +41,9 @@ declare global {
          */
         editors: Record<string, TinyMCEEditorData>;
 
+        // Undocumented
+        _submitting?: boolean;
+
         /** Assign the default options which are supported by the entity edit sheet */
         static override get defaultOptions(): FormApplicationOptions;
 
@@ -91,6 +94,13 @@ declare global {
         protected _getSubmitData(updateData?: Record<string, unknown>): Record<string, unknown>;
 
         /**
+         * Handle changes to an input element, submitting the form if options.submitOnChange is true.
+         * Do not preventDefault in this handler as other interactions on the form may also be occurring.
+         * @param event The initial change event
+         */
+        protected _onChangeInput(event: Event): Promise<void>;
+
+        /**
          * Handle unfocusing an input on form - maybe trigger an update if ``options.liveUpdate`` has been set to true
          * @param event The initial triggering event
          */
@@ -114,7 +124,11 @@ declare global {
          * @param options        TinyMCE initialization options passed to TextEditor.create
          * @param initialContent Initial text content for the editor area.
          */
-        activateEditor(name: string, options?: Partial<TinyMCE.EditorOptions>, initialContent?: string): void;
+        activateEditor(
+            name: string,
+            options?: Partial<TinyMCE.EditorOptions>,
+            initialContent?: string
+        ): Promise<TinyMCE.Editor>;
 
         /**
          * Handle saving the content of a specific editor by name

@@ -17,7 +17,7 @@ declare module foundry {
             height: number;
 
             texture: {
-                src: VideoPath;
+                src: VideoFilePath;
                 scaleX: number;
                 scaleY: number;
                 offsetX: number;
@@ -30,19 +30,19 @@ declare module foundry {
 
             sight: {
                 enabled: boolean;
-                range: number;
+                range: number | null;
                 angle: number;
                 color: HexColorString;
                 attenuation: number;
                 brightness: number;
                 saturation: number;
                 contrast: number;
-                visionMode: object;
+                visionMode: string;
             };
 
             elevation: number;
 
-            effects: VideoPath[];
+            effects: VideoFilePath[];
 
             static override get schema(): typeof data.TokenData;
 

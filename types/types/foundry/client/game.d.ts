@@ -18,7 +18,6 @@ declare global {
         TActors extends Actors<TActor> = Actors<TActor>,
         TChatMessage extends ChatMessage<TActor> = ChatMessage<TActor>,
         TCombat extends Combat = Combat,
-        TFolder extends Folder = Folder,
         TItem extends Item<TActor> = Item<TActor>,
         TMacro extends Macro = Macro,
         TScene extends Scene = Scene,
@@ -60,10 +59,14 @@ declare global {
             {
                 id: string;
                 active: boolean;
+                esmodules: Set<string>;
+                scripts: Set<string>;
                 flags: Record<string, Record<string, unknown>>;
                 title: string;
-                data: {
-                    compatibleCoreVersion: string | undefined;
+                compatibility: {
+                    minimum?: string;
+                    verified?: string;
+                    maximum?: string;
                 };
             }
         >;
@@ -83,9 +86,7 @@ declare global {
         /** A reference to the open Socket.io connection */
         socket: io.Socket;
 
-        /**
-         * A singleton GameTime instance which manages the progression of time within the game world.
-         */
+        /** A singleton GameTime instance which manages the progression of time within the game world. */
         time: GameTime;
 
         /** The id of the active game user */
@@ -96,6 +97,18 @@ declare global {
 
         /** A singleton instance of the Video Helper class */
         video: VideoHelper;
+
+        /** A singleton instance of the TooltipManger class */
+        tooltip: TooltipManager;
+
+        /** A singleton instance of the Clipboard Helper class. */
+        clipboard: ClipboardHelper;
+
+        /** A singleton instance of the Tours class */
+        tours: Tours;
+
+        /** The global document index. */
+        documentIndex: DocumentIndex;
 
         /** Whether the Game is running in debug mode */
         debug: boolean;
@@ -130,7 +143,7 @@ declare global {
         >;
 
         combats: CombatEncounters<TCombat>;
-        folders: Folders<TFolder>;
+        folders: Folders<Folder>;
         items: Items<TItem>;
         journal: Journal;
         macros: Macros<TMacro>;
@@ -199,6 +212,7 @@ declare global {
         get system(): {
             id: string;
             version: string;
+            gridUnits: string;
             data: {
                 authors: string[];
                 availability: number;
@@ -209,7 +223,6 @@ declare global {
                 download: string;
                 esmodules: string[];
                 gridDistance: number;
-                gridUnits: string;
                 initiative: string;
                 keywords: string[];
                 languages: {

@@ -32,7 +32,7 @@ declare global {
          * Determine the image icon path that should be used to portray this Combatant in the combat tracker or
          * elsewhere
          */
-        get img(): VideoPath;
+        get img(): VideoFilePath;
 
         /**
          * This is treated as a non-player combatant if it has no associated actor and no player users who can control
@@ -54,13 +54,16 @@ declare global {
         /** An array of User documents who have ownership of this Document */
         get players(): User[];
 
+        /** Has this combatant been marked as defeated? */
+        get isDefeated(): boolean;
+
         /* -------------------------------------------- */
         /*  Methods                                     */
         /* -------------------------------------------- */
 
         override testUserPermission(
             user: foundry.documents.BaseUser,
-            permission: DocumentPermission | DocumentPermissionNumber,
+            permission: DocumentOwnershipString | DocumentOwnershipLevel,
             { exact }?: { exact?: boolean }
         ): boolean;
 

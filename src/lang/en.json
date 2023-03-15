@@ -7,7 +7,9 @@
         "ItemTags.name": "Item Tags",
         "ItemTags.hint": "Enables the use additional item tags to add or change automation",
         "ItemCharges.name": "Charges for all Items",
-        "ItemCharges.hint": "Enable the use of optional charges for all items"
+        "ItemCharges.hint": "Enable the use of optional charges for all items",
+        "LoreScaling.name": "Autoscale lore",
+        "LoreScaling.hint": "Lore skills auto-scale based on level"
     },
     "PF2E-IH.ItemCategories": {
         "Bombs": "Bombs",

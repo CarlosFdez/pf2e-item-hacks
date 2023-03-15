@@ -5,14 +5,13 @@ declare global {
         TAmbientLightDocument extends AmbientLightDocument = AmbientLightDocument,
         TActiveEffect extends ActiveEffect = ActiveEffect,
         TActor extends Actor = Actor,
+        TActorDirectory extends ActorDirectory<TActor> = ActorDirectory<TActor>,
         TChatLog extends ChatLog = ChatLog,
         TChatMessage extends ChatMessage = ChatMessage,
         TCombat extends Combat = Combat,
         TCombatant extends Combatant<TCombat | null, TActor | null> = Combatant<TCombat | null, TActor | null>,
         TCombatTracker extends CombatTracker<TCombat | null> = CombatTracker<TCombat | null>,
         TCompendiumDirectory extends CompendiumDirectory = CompendiumDirectory,
-        TFogExploration extends FogExploration = FogExploration,
-        TFolder extends Folder = Folder,
         THotbar extends Hotbar = Hotbar,
         TItem extends Item = Item,
         TMacro extends Macro = Macro,
@@ -20,7 +19,8 @@ declare global {
         TTileDocument extends TileDocument = TileDocument,
         TTokenDocument extends TokenDocument = TokenDocument,
         TScene extends Scene = Scene,
-        TUser extends User = User
+        TUser extends User = User,
+        TEffectsCanvasGroup extends EffectsCanvasGroup = EffectsCanvasGroup
     > {
         /** Configure debugging flags to display additional information */
         debug: {
@@ -70,20 +70,13 @@ declare global {
 
         /** Configuration for the FogExploration document */
         FogExploration: {
-            documentClass: {
-                new (
-                    data: PreCreate<TFogExploration["_source"]>,
-                    context?: DocumentConstructionContext<TFogExploration>
-                ): TFogExploration;
-            };
+            documentClass: typeof FogExploration;
             collection: typeof WorldCollection;
         };
 
         /** Configuration for the Folder document */
         Folder: {
-            documentClass: {
-                new (data: PreCreate<TFolder["_source"]>, context?: DocumentConstructionContext<TFolder>): TFolder;
-            };
+            documentClass: typeof Folder;
             collection: typeof Folders;
         };
 
@@ -263,6 +256,32 @@ declare global {
             };
             exploredColor: number;
             unexploredColor: number;
+            groups: {
+                hidden: {
+                    groupClass: ConstructorOf<PIXI.Container>;
+                    parent: "stage";
+                };
+                rendered: {
+                    groupClass: ConstructorOf<PIXI.Container>;
+                    parent: "stage";
+                };
+                environment: {
+                    groupClass: ConstructorOf<PIXI.Container>;
+                    parent: "rendered";
+                };
+                primary: {
+                    groupClass: ConstructorOf<PIXI.Container>;
+                    parent: "environment";
+                };
+                effects: {
+                    groupClass: ConstructorOf<TEffectsCanvasGroup>;
+                    parent: "environment";
+                };
+                interface: {
+                    groupClass: ConstructorOf<InterfaceCanvasGroup>;
+                    parent: "rendered";
+                };
+            };
             layers: {
                 background: {
                     group: "primary";
@@ -304,10 +323,6 @@ declare global {
                     group: "effects";
                     layerClass: ConstructorOf<TAmbientLightDocument["object"]["layer"]>;
                 };
-                weather: {
-                    group: "effects";
-                    layerClass: typeof EffectsLayer;
-                };
                 controls: {
                     group: "interface";
                     layerClass: typeof ControlsLayer;
@@ -315,9 +330,13 @@ declare global {
             };
             lightLevels: {
                 dark: number;
+                halfdark: number;
                 dim: number;
                 bright: number;
             };
+
+            losBackend: typeof ClockwiseSweepPolygon;
+
             normalLightColor: number;
             maxZoom: number;
             objectBorderThickness: number;
@@ -325,14 +344,14 @@ declare global {
                 torch: {
                     label: "LIGHT.AnimationTorch";
                     animation: LightSource<TAmbientLightDocument["object"] | TTokenDocument["object"]>["animateTorch"];
-                    illuminationShader: typeof TorchIlluminationShader;
-                    colorationShader: typeof TorchColorationShader;
+                    illuminationShader: typeof PIXI.Shader;
+                    colorationShader: typeof PIXI.Shader;
                 };
                 pulse: {
                     label: "LIGHT.AnimationPulse";
                     animation: LightSource<TAmbientLightDocument["object"] | TTokenDocument["object"]>["animatePulse"];
-                    illuminationShader: typeof PulseIlluminationShader;
-                    colorationShader: typeof PulseColorationShader;
+                    illuminationShader: typeof PIXI.Shader;
+                    colorationShader: typeof PIXI.Shader;
                 };
                 chroma: {
                     label: "LIGHT.AnimationChroma";
@@ -393,6 +412,41 @@ declare global {
                     illuminationShader: typeof PIXI.Shader;
                 };
             };
+
+            /** The set of VisionMode definitions which are available to be used for Token vision. */
+            visionModes: {
+                // Default (Basic) Vision
+                basic: VisionMode;
+
+                // Darkvision
+                darkvision: VisionMode;
+
+                // Monochromatic
+                monochromatic: VisionMode;
+
+                // Blindness
+                blindness: VisionMode;
+
+                // Tremorsense
+                tremorsense: VisionMode;
+
+                // Light Amplification
+                lightAmplification: VisionMode;
+
+                [key: string]: VisionMode;
+            };
+
+            /** The set of DetectionMode definitions which are available to be used for visibility detection. */
+            detectionModes: {
+                basicSight: DetectionModeBasicSight;
+                seeInvisibility: DetectionModeInvisibility;
+                senseInvisibility: DetectionModeInvisibility;
+                feelTremor: DetectionModeTremor;
+                seeAll: DetectionModeAll;
+                senseAll: DetectionModeAll;
+            } & {
+                [K in string]?: DetectionMode;
+            };
         };
 
         /** Configure the default Token text style so that it may be reused and overridden by modules */
@@ -403,42 +457,54 @@ declare global {
 
         /** Configuration for dice rolling behaviors in the Foundry VTT client */
         Dice: {
-            types: Array<typeof Die | typeof DiceTerm>;
+            types: (typeof Die | typeof DiceTerm)[];
             rollModes: Record<RollMode, string>;
             rolls: ConstructorOf<Roll>[];
-            termTypes: Record<string, ConstructorOf<RollTerm>>;
+            termTypes: Record<string, ConstructorOf<RollTerm> & { fromData(data: object): RollTerm }>;
             terms: {
                 c: typeof Coin;
                 d: typeof Die;
                 f: typeof FateDie;
+                [key: string]: ConstructorOf<DiceTerm>;
             };
             randomUniform: Function;
         };
 
         /** The control icons used for rendering common HUD operations */
         controlIcons: {
-            combat: string;
-            visibility: string;
-            effects: string;
-            lock: string;
-            up: string;
-            down: string;
-            defeated: string;
-            [key: string]: string | undefined;
+            combat: ImageFilePath | VideoFilePath;
+            visibility: ImageFilePath | VideoFilePath;
+            effects: ImageFilePath | VideoFilePath;
+            lock: ImageFilePath | VideoFilePath;
+            up: ImageFilePath | VideoFilePath;
+            down: ImageFilePath | VideoFilePath;
+            defeated: ImageFilePath | VideoFilePath;
+            [key: string]: ImageFilePath | VideoFilePath | undefined;
         };
 
-        /** Suggested font families that are displayed wherever a choice is presented */
-        fontFamilies: string[];
+        /** A collection of fonts to load either from the user's local system, or remotely. */
+        fontDefinitions: Record<string, FontFamilyDefinition>;
+
+        /** deprecated since v10. */
+        _fontFamilies: string[];
 
         /** The default font family used for text labels on the PIXI Canvas */
         defaultFontFamily: string;
 
         /** An array of status effect icons which can be applied to Tokens */
-        statusEffects: string[];
+        statusEffects: StatusEffect[];
+
+        /** A mapping of status effect IDs which provide some additional mechanical integration. */
+        specialStatusEffects: {
+            DEFEATED: string;
+            INVISIBLE: string;
+            BLIND: string;
+            [key: string]: string;
+        };
 
         /** A mapping of core audio effects used which can be replaced by systems or mods */
         sounds: {
-            dice: AudioPath;
+            dice: AudioFilePath;
             lock: string;
             notification: string;
             combat: string;
@@ -453,6 +519,14 @@ declare global {
         /** Maximum canvas zoom scale */
         maxCanvasZoom: number;
 
+        /** Custom enrichers for TextEditor.enrichHTML */
+        TextEditor: {
+            enrichers: {
+                pattern: RegExp;
+                enricher: (match: RegExpMatchArray, options: EnrichHTMLOptions) => Promise<HTMLElement | null>;
+            }[];
+        };
+
         /* -------------------------------------------- */
         /*  Integrations                                */
         /* -------------------------------------------- */
@@ -464,7 +538,7 @@ declare global {
         };
 
         ui: {
-            actors: typeof ActorDirectory;
+            actors: ConstructorOf<TActorDirectory>;
             chat: ConstructorOf<TChatLog>;
             combat: ConstructorOf<TCombatTracker>;
             compendium: ConstructorOf<TCompendiumDirectory>;
@@ -485,5 +559,25 @@ declare global {
             tables: typeof RollTableDirectory;
             // webrtc: typeof CameraViews;
         };
+    }
+
+    interface StatusEffect {
+        id: string;
+        label: string;
+        icon: ImageFilePath | VideoFilePath;
+    }
+
+    interface FontFamilyDefinition {
+        /** Whether the font is available in the rich text editor. This will also enable it for notes and drawings. */
+        editor: boolean;
+        fonts: FontDefinition[];
+    }
+
+    interface FontDefinition extends FontFaceDescriptors {
+        /**
+         * Individual font face definitions for this font family. If this is empty, the font family may only be loaded
+         * from the client's OS-installed fonts.
+         */
+        urls: string[];
     }
 }

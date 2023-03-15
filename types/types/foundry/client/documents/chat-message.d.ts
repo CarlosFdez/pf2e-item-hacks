@@ -15,6 +15,8 @@ declare global {
 
         flavor: string;
 
+        _rollExpanded: boolean;
+
         /**
          * Return the recommended String alias for this message.
          * The alias could be a Token name in the case of in-character messages or dice rolls.
@@ -33,9 +35,6 @@ declare global {
 
         /** Test whether the chat message contains a dice roll */
         get isRoll(): boolean;
-
-        /** Return the Roll instance contained in this chat message, if one is present */
-        get roll(): Rolled<Roll> | null;
 
         /**
          * Return whether the ChatMessage is visible to the current User.
@@ -138,7 +137,7 @@ declare global {
          * Obtain an Actor instance which represents the speaker of this message (if any)
          * @param speaker The speaker data object
          */
-        static getSpeakerActor(speaker: foundry.data.ChatSpeakerSource | foundry.data.ChatSpeakerData): Actor | null;
+        static getSpeakerActor(speaker: DeepPartial<foundry.data.ChatSpeakerSource>): Actor | null;
 
         /** Obtain a data object used to evaluate any dice rolls associated with this particular chat message */
         getRollData(): object;
@@ -152,6 +151,12 @@ declare global {
 
         /** Render the HTML for the ChatMessage which should be added to the log */
         getHTML(): Promise<JQuery>;
+
+        /**
+         * Render the inner HTML content for ROLL type messages.
+         * @param messageData      The chat message data used to render the message HTML
+         */
+        protected _renderRollContent: (messageData: ChatMessageRenderData) => Promise<void>;
 
         protected override _preUpdate(
             changed: DeepPartial<foundry.data.ChatMessageSource>,
@@ -193,9 +198,23 @@ declare global {
             data: PreCreate<T["_source"]>[] | PreCreate<T["_source"]>,
             context?: ChatMessageModificationContext
         ): Promise<T[] | T | undefined>;
+
+        const implementation: typeof ChatMessage;
     }
 
     interface ChatMessageModificationContext extends DocumentModificationContext {
-        rollMode?: RollMode;
+        rollMode?: RollMode | "roll";
+    }
+
+    interface ChatMessageRenderData {
+        message: RawObject<foundry.data.ChatMessageData>;
+        user: User;
+        author: User;
+        alias: string;
+        borderColor?: string;
+        cssClass: string;
+        isWhisper: number;
+        canDelete: boolean;
+        whisperTo: string;
     }
 }

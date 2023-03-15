@@ -65,9 +65,9 @@ declare interface Number {
 /* -------------------------------------------- */
 
 declare interface Array<T> {
-    fromRange(n: number): Array<T>;
+    fromRange(n: number): T[];
 
-    deepFlatten(): Array<T>;
+    deepFlatten(): T[];
 
     /**
      * Test equality of the values of this array against the values of some other Array
@@ -78,8 +78,8 @@ declare interface Array<T> {
     /**
      * Partition an original array into two children array based on a logical test
      * Elements which test as false go into the first result while elements testing as true appear in the second
-     * @param {Function}
-     * @return An Array of length two whose elements are the partitioned pieces of the original
+     * @param rule {Function}
+     * @returns An Array of length two whose elements are the partitioned pieces of the original
      */
     partition(rule: Function): [T, T];
 

@@ -1,10 +1,14 @@
+import { CharacterSheetPF2e } from "@actor/character/sheet";
+import { ActionItemPF2e, FeatPF2e } from "@item";
+
 type Abstract<T> = Function & { prototype: T };
 type Constructor<T> = new (...args: any[]) => T;
 export type Class<T> = Abstract<T> | Constructor<T>;
 type UnknownFunction = (...args: unknown[]) => unknown;
 
 export function isCharacterSheet(sheet: ActorSheet): sheet is CharacterSheetPF2e {
-    if (sheet instanceof CONFIG.Actor.sheetClasses.character["pf2e.CharacterSheetPF2e"]?.cls) {
+    const sheetClass = CONFIG.Actor.sheetClasses.character["pf2e.CharacterSheetPF2e"]?.cls;
+    if (sheetClass && sheet instanceof sheetClass) {
         return true;
     }
 

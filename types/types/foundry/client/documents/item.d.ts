@@ -12,7 +12,7 @@ declare global {
         /** A convenience alias of Item#parent which is more semantically intuitive */
         get actor(): this["parent"];
 
-        img: ImagePath;
+        img: ImageFilePath;
 
         /** A convenience alias of Item#isEmbedded which is preserves legacy support */
         get isOwned(): boolean;
@@ -59,9 +59,6 @@ declare global {
         _sheet: ItemSheet<this> | null;
 
         get sheet(): ItemSheet<this>;
-
-        getFlag(scope: string, key: string): any;
-        getFlag(scope: "core", key: "sourceId"): string | undefined;
     }
 
     type EmbeddedItemUUID = `Actor.${string}.Item.${string}`;

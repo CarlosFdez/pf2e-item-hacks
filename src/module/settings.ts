@@ -1,10 +1,11 @@
 export const MODULE_NAME = "pf2e-item-hacks";
 
 function getVersion(): string {
-    const module = game.modules.get(MODULE_NAME);
+    const module: any = game.modules.get(MODULE_NAME);
     if (module.active) {
         return (module as any).data.version;
     }
+    return "";
 }
 
 declare global {
@@ -12,6 +13,7 @@ declare global {
         get(name: typeof MODULE_NAME, key: "inventory-categories"): boolean;
         get(name: typeof MODULE_NAME, key: "item-tags"): boolean;
         get(name: typeof MODULE_NAME, key: "item-charges"): boolean;
+        get(name: typeof MODULE_NAME, key: "lore-scaling"): boolean;
     }
 }
 
@@ -48,6 +50,16 @@ export function registerSettings() {
         default: false,
         onChange: () => window.location.reload(),
     });
+
+    // game.settings.register(MODULE_NAME, "lore-scaling", {
+    //     name: game.i18n.localize("PF2E-IH.SETTINGS.LoreScaling.name"),
+    //     hint: game.i18n.localize("PF2E-IH.SETTINGS.LoreScaling.hint"),
+    //     scope: "world",
+    //     config: true,
+    //     type: Boolean,
+    //     default: false,
+    //     onChange: () => window.location.reload(),
+    // });
 
     // game.settings.register(MODULE_NAME, "item-charges", {
     //     name: game.i18n.localize("PF2E-IH.SETTINGS.ItemCharges.name"),

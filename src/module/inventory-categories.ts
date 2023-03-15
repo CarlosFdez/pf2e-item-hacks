@@ -1,3 +1,6 @@
+import { CharacterSheetPF2e } from "@actor/character/sheet";
+import { LootSheetPF2e } from "@actor/loot/sheet";
+import { ConsumablePF2e, PhysicalItemPF2e } from "@item";
 import { Class, insertIntoObject, replaceMethod } from "./util";
 
 const InventoryCategories = {
@@ -15,8 +18,8 @@ const InventoryCategories = {
             return data;
         });
 
-        replaceMethod(LootSheet, "getData", async (original, options?: unknown) => {
-            const data = await original.call(this, options);
+        replaceMethod(LootSheet, "getData", async (original) => {
+            const data = await original.call(this);
             updateInventory(data.inventory.sections);
             return data;
         });

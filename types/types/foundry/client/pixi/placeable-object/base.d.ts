@@ -26,12 +26,6 @@ declare global {
         /** A mouse interaction manager instance which handles mouse workflows related to this object. */
         mouseInteractionManager: MouseInteractionManager;
 
-        /** An indicator for whether the object is currently controlled */
-        protected _controlled: boolean;
-
-        /** An indicator for whether the object is currently a hover target */
-        protected _hover: boolean;
-
         /** Identify the official EmbeddedEntity name for this PlaceableObject class */
         static embeddedName: string;
 
@@ -51,6 +45,18 @@ declare global {
         /** The id of the corresponding Document which this PlaceableObject represents. */
         get id(): string;
 
+        /** A unique identifier which is used to uniquely identify elements on the canvas related to this object. */
+        get objectId(): string;
+
+        /**
+         * The named identified for the source object associated with this PlaceableObject.
+         * This differs from the objectId because the sourceId is the same for preview objects as for the original.
+         */
+        get sourceId(): string;
+
+        /** Is this placeable object a temporary preview? */
+        get isPreview(): boolean;
+
         /** The field-of-vision polygon for the object, if it has been computed */
         get fov(): PIXI.Polygon;
 
@@ -65,6 +71,12 @@ declare global {
          * it represents.
          */
         get sheet(): TDocument["sheet"];
+
+        /** An indicator for whether the object is currently controlled */
+        get controlled(): boolean;
+
+        /** An indicator for whether the object is currently a hover target */
+        get hover(): boolean;
 
         /* -------------------------------------------- */
         /*  Permission Controls                         */
@@ -126,8 +138,17 @@ declare global {
 
         override destroy(options?: boolean | PIXI.IDestroyOptions): void;
 
+        /**
+         * The inner _destroy method which may optionally be defined by each PlaceableObject subclass.
+         * @param [options] Options passed to the initial destroy call
+         */
+        protected _destroy(options?: object): void;
+
         /** Draw the placeable object into its parent container */
         draw(): Promise<this>;
+
+        /** The inner _draw method which must be defined by each PlaceableObject subclass. */
+        protected abstract _draw(): Promise<void>;
 
         /**
          * Refresh the current display state of the Placeable Object
@@ -243,6 +264,18 @@ declare global {
 
         /** Callback actions which occur when a mouse-drag action is first begun. */
         protected _onDragLeftStart(event: PIXI.InteractionEvent): void;
+
+        /**
+         * Begin a drag operation from the perspective of the preview clone.
+         * Modify the appearance of both the clone (this) and the original (_original) object.
+         */
+        protected _onDragStart(): void;
+
+        /**
+         * Conclude a drag operation from the perspective of the preview clone.
+         * Modify the appearance of both the clone (this) and the original (_original) object.
+         */
+        protected _onDragEnd(): void;
 
         /** Callback actions which occur on a mouse-move operation. */
         protected _onDragLeftMove(event: PIXI.InteractionEvent): void;

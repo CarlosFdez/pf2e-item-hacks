@@ -6,22 +6,20 @@ declare module foundry {
          * @property data The constructed data object for the document.
          */
         class BaseActor extends abstract.Document {
-            prototypeToken: foundry.data.PrototypeTokenData;
+            prototypeToken: foundry.data.PrototypeToken;
 
             /** The default icon used for newly created Actor documents */
-            static DEFAULT_ICON: ImagePath;
+            static DEFAULT_ICON: ImageFilePath;
 
             static override get schema(): ConstructorOf<data.ActorData<BaseActor, BaseActiveEffect, BaseItem>>;
 
             static override get metadata(): ActorMetadata;
 
-            /**
-             * A reference to the Collection of embedded ActiveEffect instances in the Actor document, indexed by _id.
-             */
-            get effects(): this["data"]["effects"];
+            /** A Collection of Item embedded Documents */
+            readonly items: abstract.EmbeddedCollection<documents.BaseItem>;
 
-            /** A reference to the Collection of embedded Item instances in the Actor document, indexed by _id. */
-            get items(): this["data"]["items"];
+            /** A Collection of ActiveEffect embedded Documents */
+            readonly effects: abstract.EmbeddedCollection<documents.BaseActiveEffect>;
 
             /**
              * Migrate the system data object to conform to data model defined by the current system version.
@@ -63,7 +61,7 @@ declare module foundry {
             // V10 shim
             readonly system: this["data"]["system"];
 
-            get documentName(): typeof BaseActor["metadata"]["name"];
+            get documentName(): (typeof BaseActor)["metadata"]["name"];
         }
 
         interface ActorMetadata extends abstract.DocumentMetadata {
